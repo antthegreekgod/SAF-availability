@@ -6,15 +6,16 @@ import pdb
 import re
 from tabulate import tabulate
 from termcolor import colored
-from pwn import *
 from getpass import getpass
 
 class SAF:
 
-    def __init__(self):
+    def __init__(self, day="today"):
         self.url = "https://uab.deporsite.net/reserva-espais?IdDeporte=531"
         self.disp = "https://uab.deporsite.net/ajax/TInnova_v2/ReservaRecursos_Selector_v2_2/llamadaAjax/solicitaDisponibilidad"
         self.today = self.actual_date()
+        if day == "tomorrow":
+            self.today = str(int(self.today) + 1)
         self.payload = f"fechaInicio={self.today}%2F06%2F2024&fechaFin={self.today}%2F06%2F2024&IdCentro=3&IdDeporte=531&IdTipoRecurso=0&IdModalidad=0&RecursoHumano=0&IdPersona=0&UtilizarIdUsuarioParaObtenerDisponibilidad=0"
         self.weekdays = {"7:15":"","8:30":"","9:45":"","11:00":"","12:15":"","13:30":"","14:45":"","16:00":"","17:15":"","18:30":"","19:45":""}
         self.url_login = "https://uab.deporsite.net/ajax/TInnova_c/Login/llamadaAjax/validaUsuarioPassword"
@@ -83,6 +84,7 @@ def menu():
     --------------------- WELCOME TO SAF ---------------------
 
     1) Today's availability
+    2) Tomorrow's availability
     3) Exit
     
     ------------------- by @antthegreekgod -------------------
@@ -97,15 +99,16 @@ def menu():
 
     
 def main():
-    saf = SAF()
     while True:
         choice = menu()
         if choice == 1:
+            saf = SAF()
             saf.availability()
-#        elif choice == 2:
-#            saf.login()
+        elif choice == 2:
+            saf = SAF("tomorrow")
+            saf.availability()
         elif choice == 3:
-            print("Until next time!")
+            print(colored("\nUntil next time!", "green"))
             break
         else:
             print("Option not implemented")

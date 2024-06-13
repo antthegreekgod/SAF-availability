@@ -1,5 +1,4 @@
 # SAF (Servei d'Activitat Fisica) UAB availability checker
----------------
 This is a tool to check my gym's availability from my terminal. Currently it is possible to check today's and tomorrow's availability.
 
 ## Time Slot States

@@ -2,7 +2,6 @@
 
 import requests
 import datetime
-import pdb
 import re
 from tabulate import tabulate
 from termcolor import colored
@@ -16,7 +15,7 @@ class SAF:
         self.day = day
         if self.day == "tomorrow":
             self.today = str(int(self.today) + 1)
-        self.weekday = self.dayOfWeek()
+        self.weekday = self.day_of_week()
         if not self.weekday:
             idDeporte = 546
         self.url = f"https://uab.deporsite.net/reserva-espais?IdDeporte={idDeporte}"
@@ -31,7 +30,7 @@ class SAF:
         today = str(datetime.date.today())
         return re.split("-", today)[2]
     
-    def dayOfWeek(self):
+    def day_of_week(self):
         today = datetime.date.weekday(datetime.date.today())
         if self.day == "today":
             if today >= 5:
@@ -43,8 +42,6 @@ class SAF:
                 return False
             else:
                 return True
-
-
 
     # Regex to Retrieve CSRF Token
     def token(self, first):
@@ -70,31 +67,27 @@ class SAF:
     def pretty_availability(self, req):
         disponibilidad = re.findall('disponibilidad":"\d[0-9]+', req.text)[0]
         numbers = re.findall('\d[0-9]+', disponibilidad)[0]
-        pos = 0
         if self.weekday:
-            for num in numbers:
-                if num == "0":
-                    self.weekdays[list(self.weekdays.keys())[pos]] = colored("Available", "green")
-                elif num == "1":
-                    self.weekdays[list(self.weekdays.keys())[pos]] = colored("Full", "red")
-                else:
-                    self.weekdays[list(self.weekdays.keys())[pos]] = colored("Not Available", "yellow")
-                pos += 1 
+            self.fill_time_table(numbers, self.weekdays)
         else:
-            for num in numbers:
-                if num == "0":
-                    self.weekends[list(self.weekends.keys())[pos]] = colored("Available", "green")
-                elif num == "1":
-                    self.weekends[list(self.weekends.keys())[pos]] = colored("Full", "red")
-                else:
-                    self.weekends[list(self.weekends.keys())[pos]] = colored("Not Available", "yellow")
-                pos += 1 
- 
+            self.fill_time_table(numbers, self.weekends) 
         head = ['Time', 'Availability']
         if self.weekday:
             print(tabulate(self.weekdays.items(), headers=head, tablefmt="grid"))
         else:
             print(tabulate(self.weekends.items(), headers=head, tablefmt="grid"))
+
+    def fill_time_table(self, numbers, day):
+        pos = 0
+        for num in numbers:
+            if num == "0":
+                day[list(day.keys())[pos]] = colored("Available", "green")
+            elif num == "1":
+                day[list(day.keys())[pos]] = colored("Full", "red")
+            else:
+                day[list(day.keys())[pos]] = colored("Not Available", "yellow")
+            pos += 1 
+
 
     def credentials(self):
         username = input(colored("\n>> Username: ", 'yellow'))

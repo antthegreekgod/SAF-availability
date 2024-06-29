@@ -11,3 +11,8 @@ A time slot can be on three different states:
 ## Future Features
 On the near future I plan on adding new functionality, such as the ability to log in and book available time slots.
 
+## Usage
+
+```
+python3 saf.py
+```

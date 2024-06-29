@@ -11,8 +11,16 @@ A time slot can be on three different states:
 ## Future Features
 On the near future I plan on adding new functionality, such as the ability to log in and book available time slots.
 
+## Installation
+
+```bash
+git clone https://github.com/antthegreekgod/SAF-availability.git
+cd SAF-availability
+pip3 install -r requirements.txt
+```
+
 ## Usage
 
-```
+```python
 python3 saf.py
 ```

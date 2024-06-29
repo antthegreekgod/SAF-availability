@@ -21,7 +21,6 @@ class SAF:
             idDeporte = 546
         self.url = f"https://uab.deporsite.net/reserva-espais?IdDeporte={idDeporte}"
         self.payload = f"fechaInicio={self.today}%2F06%2F2024&fechaFin={self.today}%2F06%2F2024&IdCentro=3&IdDeporte={idDeporte}&IdTipoRecurso=0&IdModalidad=0&RecursoHumano=0&IdPersona=0&UtilizarIdUsuarioParaObtenerDisponibilidad=0"
-        pdb.set_trace()
         self.weekdays = {"7:15":"","8:30":"","9:45":"","11:00":"","12:15":"","13:30":"","14:45":"","16:00":"","17:15":"","18:30":"","19:45":""}
         self.weekends = {"8:00":"","9:30":"","11:00":"","12:30":"","14:00":"","15:30":"","17:00":"","18:30":""}
         self.url_login = "https://uab.deporsite.net/ajax/TInnova_c/Login/llamadaAjax/validaUsuarioPassword"
@@ -57,14 +56,14 @@ class SAF:
 
     # set CSRF token headers and laravel cookie
     def setting_session(self):
-        first = self.s.get(self.url, verify=False)
+        first = self.s.get(self.url)
         csrf = self.token(first)
         return csrf
 
     # retrieve availability
     def availability(self):
         csrf = self.setting_session()
-        req = self.s.post(self.disp, headers={'X-Csrf-Token': csrf, 'Content-Type':'application/x-www-form-urlencoded'}, data=self.payload, verify=False)
+        req = self.s.post(self.disp, headers={'X-Csrf-Token': csrf, 'Content-Type':'application/x-www-form-urlencoded'}, data=self.payload)
         self.pretty_availability(req)
 
     # Create table with Current Availability
@@ -84,11 +83,11 @@ class SAF:
         else:
             for num in numbers:
                 if num == "0":
-                    self.weekends[list(self.weekdays.keys())[pos]] = colored("Available", "green")
+                    self.weekends[list(self.weekends.keys())[pos]] = colored("Available", "green")
                 elif num == "1":
-                    self.weekends[list(self.weekdays.keys())[pos]] = colored("Full", "red")
+                    self.weekends[list(self.weekends.keys())[pos]] = colored("Full", "red")
                 else:
-                    self.weekends[list(self.weekdays.keys())[pos]] = colored("Not Available", "yellow")
+                    self.weekends[list(self.weekends.keys())[pos]] = colored("Not Available", "yellow")
                 pos += 1 
  
         head = ['Time', 'Availability']

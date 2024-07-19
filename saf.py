@@ -3,6 +3,7 @@
 import requests
 import datetime
 import re
+import pdb
 from tabulate import tabulate
 from termcolor import colored
 from getpass import getpass
@@ -11,7 +12,7 @@ class SAF:
 
     def __init__(self, day="today", idDeporte=531):
         self.disp = "https://uab.deporsite.net/ajax/TInnova_v2/ReservaRecursos_Selector_v2_2/llamadaAjax/solicitaDisponibilidad"
-        self.today = self.actual_date()
+        self.today, self.month, self.year = self.actual_date()
         self.day = day
         if self.day == "tomorrow":
             self.today = str(int(self.today) + 1)
@@ -19,7 +20,7 @@ class SAF:
         if not self.weekday:
             idDeporte = 546
         self.url = f"https://uab.deporsite.net/reserva-espais?IdDeporte={idDeporte}"
-        self.payload = f"fechaInicio={self.today}%2F06%2F2024&fechaFin={self.today}%2F06%2F2024&IdCentro=3&IdDeporte={idDeporte}&IdTipoRecurso=0&IdModalidad=0&RecursoHumano=0&IdPersona=0&UtilizarIdUsuarioParaObtenerDisponibilidad=0"
+        self.payload = f"fechaInicio={self.today}%2F{self.month}%2F{self.year}&fechaFin={self.today}%2F{self.month}%2F{self.year}&IdCentro=3&IdDeporte={idDeporte}&IdTipoRecurso=0&IdModalidad=0&RecursoHumano=0&IdPersona=0&UtilizarIdUsuarioParaObtenerDisponibilidad=0"
         self.weekdays = {"7:15":"","8:30":"","9:45":"","11:00":"","12:15":"","13:30":"","14:45":"","16:00":"","17:15":"","18:30":"","19:45":""}
         self.weekends = {"8:00":"","9:30":"","11:00":"","12:30":"","14:00":"","15:30":"","17:00":"","18:30":""}
         self.url_login = "https://uab.deporsite.net/ajax/TInnova_c/Login/llamadaAjax/validaUsuarioPassword"
@@ -28,7 +29,10 @@ class SAF:
     @staticmethod
     def actual_date():
         today = str(datetime.date.today())
-        return re.split("-", today)[2]
+        year = re.split("-", today)[0]
+        month =  re.split("-", today)[1]
+        day =  re.split("-", today)[2]
+        return day, month, year
     
     def day_of_week(self):
         today = datetime.date.weekday(datetime.date.today())
@@ -65,6 +69,7 @@ class SAF:
 
     # Create table with Current Availability
     def pretty_availability(self, req):
+        pdb.set_trace()
         disponibilidad = re.findall('disponibilidad":"\d[0-9]+', req.text)[0]
         numbers = re.findall('\d[0-9]+', disponibilidad)[0]
         if self.weekday:

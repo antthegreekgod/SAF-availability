@@ -3,7 +3,6 @@
 import requests
 import datetime
 import re
-import pdb
 from tabulate import tabulate
 from termcolor import colored
 from getpass import getpass
@@ -69,7 +68,6 @@ class SAF:
 
     # Create table with Current Availability
     def pretty_availability(self, req):
-        pdb.set_trace()
         disponibilidad = re.findall('disponibilidad":"\d[0-9]+', req.text)[0]
         numbers = re.findall('\d[0-9]+', disponibilidad)[0]
         if self.weekday:
